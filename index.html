@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="jspsych/jspsych.js"></script>
+  <script src="jspsych-assimilation-similarity.js"></script>
+  <link rel="stylesheet" href="jspsych/css/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+
+var test_trial = {
+  type: 'assimilation-similarity',
+  stimulus: 'audio/AW_stoeht_2.wav',
+  choices: ['he','hid','hey','head','had','ha','haw','huh','who','hood','hoe','her'],
+  similarity_scale_divisions: 6, // default, no need to specify unless you want to change
+  continue_button_label: "Next sound", // default, no need to specify unless you want to change
+  choice_btn_width: 100, // default, no need to specify unless you want to change
+  choice_btn_height: 50, // default, no need to specify unless you want to change
+  choice_btn_margin: 50, // default, no need to specify unless you want to change
+  display_width: '95%', // default, no need to specify unless you want to change (can set to something like 600px if you want more control over layout)
+}
+
+jsPsych.init({
+  timeline: [test_trial]
+});
+
+</script>
+</html>
