@@ -1,0 +1,24 @@
+Here are all the parameters for the assimilation-similarity plugin, and what they do
+
+choices - array of labels for buttons, or array of image files for buttons
+stimulus - audio file to play
+top_message - text that appears above buttons. can use HTML markup.
+choice_btns_are_images - true if choices array is image files, false otherwise
+correct_response - must match an entry in the choices array. indicates the correct response.
+show_feedback - if true, show feedback about which response was correct
+feedback_duration - how long to show the feedback
+play_audio_feedback_correct - play the audio again during feedback for a correct response? true or false.
+play_audio_feedback_incorrect - play the audio again during feedback for an incorrect response? true or false.
+delay_before_sound - delay in ms before the audio file plays at start of trial
+similarity_scale_divisions - how many breaks in the similarity scale.
+similarity_low_label - what text to show on the similarity scale with the first button.
+similarity_high_label - what text to show on the similarity scale with the last button.
+continue_button_label - text displayed on the button for the continuing to next trial.
+choice_btn_width - how wide to make the choice buttons
+choice_btn_height - how tall to make the choice buttons
+choice_btn_margin - how big of gap between the choice buttons
+display_width - how wide is the overall set of buttons. use this in conjunction with params above to get a nice grid.
+allow_other - allow people to select other instead of a choice.
+other_btn_label - text on the "other" button
+allow_play_again - allow people to play the sound file again.
+play_again_btn_label - text on the play again button.

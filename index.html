@@ -2,26 +2,268 @@
 <html>
 <head>
   <script src="jspsych/jspsych.js"></script>
+  <script src="jspsych/plugins/jspsych-single-stim.js"></script>
+  <script src="jspsych/plugins/jspsych-button-response.js"></script>
+  <script src="jspsych/plugins/jspsych-call-function.js"></script>
+  <script src="jspsych/plugins/jspsych-survey-text.js"></script>
   <script src="jspsych-assimilation-similarity.js"></script>
   <link rel="stylesheet" href="jspsych/css/jspsych.css"></link>
 </head>
 <body></body>
 <script>
 
-var test_trial = {
+var timeline = [];
+
+// subject ID entry
+var get_subject_id = {
+  type: 'survey-text',
+  questions: ['Enter the subject ID number'],
+  on_finish: function(data){
+    var subject_id = JSON.parse(data.responses).Q0.trim(); // removes extra whitespace.
+    jsPsych.data.addProperties({subject_id: subject_id});
+  }
+}
+
+timeline.push(get_subject_id);
+
+// instructions
+// you can copy/paste this trial to add more instructions elsewhere
+var instructions = {
+  type: 'button-response',
+  stimulus: '<p>Instructions for the task can go here.</p><p>More instructions.</p>',
+  is_html: true,
+  choices: ['OK']
+}
+
+timeline.push(instructions);
+
+/* THIS TRIAL IS JUST TO DEMO HOW IMAGES WORK AS LABELS */
+var image_demo = {
   type: 'assimilation-similarity',
-  stimulus: 'audio/AW_stoeht_2.wav',
-  choices: ['he','hid','hey','head','had','ha','haw','huh','who','hood','hoe','her'],
-  similarity_scale_divisions: 6, // default, no need to specify unless you want to change
-  continue_button_label: "Next sound", // default, no need to specify unless you want to change
-  choice_btn_width: 100, // default, no need to specify unless you want to change
-  choice_btn_height: 50, // default, no need to specify unless you want to change
-  choice_btn_margin: 50, // default, no need to specify unless you want to change
-  display_width: '95%', // default, no need to specify unless you want to change (can set to something like 600px if you want more control over layout)
+  stimulus: 'audio/DD_beat.wav',
+  choices: ['img/1.jpg', 'img/2.jpg', 'img/3.jpg'],
+  choice_btns_are_images: true,
+  choice_btn_width: 150,
+  choice_btn_height: 175,
+}
+
+timeline.push(image_demo);
+
+// training
+// the training_items array has one entry { } for each different item
+// the audio_file and correct_response names are used later on in the training
+// object. they are referenced by calling jsPsych.timelineVariable('audio_file')
+// and jsPsych.timelineVariable('correct_response')
+
+var training_items = [
+  {audio_file: 'audio/DD_beat.wav', correct_response: 'he'},
+  {audio_file: 'audio/RL_bought.wav', correct_response: 'he'},
+  {audio_file: 'audio/DD_bet.wav', correct_response: 'he'},
+  {audio_file: 'audio/RL_boot.wav', correct_response: 'he'},
+  {audio_file: 'audio/DD_bat.wav', correct_response: 'he'},
+  {audio_file: 'audio/RL_but.wav', correct_response: 'he'},
+  {audio_file: 'audio/DD_bit.wav', correct_response: 'he'},
+  {audio_file: 'audio/DD_boat.wav', correct_response: 'he'},
+  {audio_file: 'audio/RL_bert.wav', correct_response: 'he'},
+  {audio_file: 'audio/RL_baa.wav', correct_response: 'he'},
+  {audio_file: 'audio/DD_book.wav', correct_response: 'he'},
+  {audio_file: 'audio/RL_zoub.wav', correct_response: 'he'},
+  {audio_file: 'audio/RL_bae.wav', correct_response: 'he'},
+  {audio_file: 'audio/DD_zub.wav', correct_response: 'he'},
+  {audio_file: 'audio/DD_ba.wav', correct_response: 'he'},
+  {audio_file: 'audio/RL_be.wav', correct_response: 'he'},
+  {audio_file: 'audio/DD_zeib.wav', correct_response: 'he'},
+  {audio_file: 'audio/DD_zaab.wav', correct_response: 'he'},
+  {audio_file: 'audio/RL_zerb.wav', correct_response: 'he'},
+  {audio_file: 'audio/RL_ziib.wav', correct_response: 'he'},
+  {audio_file: 'audio/DD_hae.wav', correct_response: 'he'},
+  {audio_file: 'audio/RL_hu.wav', correct_response: 'he'},
+  {audio_file: 'audio/DD_bi.wav', correct_response: 'he'}
+]
+
+var training = {
+  timeline: [{
+    type: 'assimilation-similarity',
+    stimulus: jsPsych.timelineVariable('audio_file'),
+    correct_response: jsPsych.timelineVariable('correct_response'),
+    choices: ['he','hid','hey','head','had','ha','haw','huh','who','hood','hoe','her'],
+    show_feedback: true,
+    play_audio_feedback_incorrect: true,
+    play_audio_feedback_correct: false
+  }],
+  timeline_variables: training_items,
+  randomize_order: true,
+  loop_function: function(data){
+    // filter the data from this round of training to only include correct responses. then count.
+    var n_correct = data.filter({correct: true}).count();
+    console.log("Total correct: "+n_correct);
+    // repeat the loop (return true) if number of correct responses is less than 15.
+    if(n_correct < 15){
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+timeline.push(training);
+
+// testing
+// test_items defines the different audio files.
+
+var test_items = [
+  {audio_file: 'audio/AW_skakk_2.wav'},
+  {audio_file: 'audio/AW_skehk_2.wav'},
+  {audio_file: 'audio/AW_skekk_2.wav'},
+  {audio_file: 'audio/AW_skiek_2.wav'},
+  {audio_file: 'audio/AW_skikk_2.wav'},
+  {audio_file: 'audio/AW_skohk_2.wav'},
+  {audio_file: 'audio/AW_skoehk_2.wav'},
+  {audio_file: 'audio/AW_skuhk_2.wav'},
+  {audio_file: 'audio/AW_skuehk_2.wav'},
+  {audio_file: 'audio/AW_skuekk_2.wav'},
+  {audio_file: 'audio/AW_statt_2.wav'},
+  {audio_file: 'audio/AW_steht_2.wav'},
+  {audio_file: 'audio/AW_stett_2.wav'},
+  {audio_file: 'audio/AW_stiet_2.wav'},
+  {audio_file: 'audio/AW_stitt_2.wav'},
+  {audio_file: 'audio/AW_stoht_2.wav'},
+  {audio_file: 'audio/AW_stoeht_2.wav'},
+  {audio_file: 'audio/AW_stuht_2.wav'},
+  {audio_file: 'audio/AW_stueht_2.wav'},
+  {audio_file: 'audio/AW_stuett_2.wav'},
+  {audio_file: 'audio/CK_skakk_2.wav'},
+  {audio_file: 'audio/CK_skehk_2.wav'},
+  {audio_file: 'audio/CK_skekk_2.wav'},
+  {audio_file: 'audio/CK_skiek_2.wav'},
+  {audio_file: 'audio/CK_skikk_2.wav'},
+  {audio_file: 'audio/CK_skohk_2.wav'},
+  {audio_file: 'audio/CK_skoehk_2.wav'},
+  {audio_file: 'audio/CK_skuhk_2.wav'},
+  {audio_file: 'audio/CK_skuehk_2.wav'},
+  {audio_file: 'audio/CK_skuekk_2.wav'},
+  {audio_file: 'audio/CK_statt_2.wav'},
+  {audio_file: 'audio/CK_steht_2.wav'},
+  {audio_file: 'audio/CK_stett_2.wav'},
+  {audio_file: 'audio/CK_stiet_2.wav'},
+  {audio_file: 'audio/CK_stitt_2.wav'},
+  {audio_file: 'audio/CK_stoht_2.wav'},
+  {audio_file: 'audio/CK_stoeht_2.wav'},
+  {audio_file: 'audio/CK_stuht_2.wav'},
+  {audio_file: 'audio/CK_stueht_2.wav'},
+  {audio_file: 'audio/CK_stuett_2.wav'},
+  {audio_file: 'audio/FK_skakk_2.wav'},
+  {audio_file: 'audio/FK_skehk_2.wav'},
+  {audio_file: 'audio/FK_skekk_2.wav'},
+  {audio_file: 'audio/FK_skiek_2.wav'},
+  {audio_file: 'audio/FK_skikk_2.wav'},
+  {audio_file: 'audio/FK_skohk_2.wav'},
+  {audio_file: 'audio/FK_skoehk_2.wav'},
+  {audio_file: 'audio/FK_skuhk_2.wav'},
+  {audio_file: 'audio/FK_skuehk_2.wav'},
+  {audio_file: 'audio/FK_skuekk_2.wav'},
+  {audio_file: 'audio/FK_statt_2.wav'},
+  {audio_file: 'audio/FK_steht_2.wav'},
+  {audio_file: 'audio/FK_stett_2.wav'},
+  {audio_file: 'audio/FK_stiet_2.wav'},
+  {audio_file: 'audio/FK_stitt_2.wav'},
+  {audio_file: 'audio/FK_stoht_2.wav'},
+  {audio_file: 'audio/FK_stoeht_2.wav'},
+  {audio_file: 'audio/FK_stuht_2.wav'},
+  {audio_file: 'audio/FK_stueht_2.wav'},
+  {audio_file: 'audio/FK_stuett_2.wav'},
+  {audio_file: 'audio/UD_skakk_2.wav'},
+  {audio_file: 'audio/UD_skehk_2.wav'},
+  {audio_file: 'audio/UD_skekk_2.wav'},
+  {audio_file: 'audio/UD_skiek_2.wav'},
+  {audio_file: 'audio/UD_skikk_2.wav'},
+  {audio_file: 'audio/UD_skohk_2.wav'},
+  {audio_file: 'audio/UD_skoehk_2.wav'},
+  {audio_file: 'audio/UD_skuehk_2.wav'},
+  {audio_file: 'audio/UD_skuhk_2.wav'},
+  {audio_file: 'audio/UD_skuekk_2.wav'},
+  {audio_file: 'audio/UD_statt_2.wav'},
+  {audio_file: 'audio/UD_steht_2.wav'},
+  {audio_file: 'audio/UD_stett_2.wav'},
+  {audio_file: 'audio/UD_stiet_2.wav'},
+  {audio_file: 'audio/UD_stitt_2.wav'},
+  {audio_file: 'audio/UD_stoht_2.wav'},
+  {audio_file: 'audio/UD_stoeht_2.wav'},
+  {audio_file: 'audio/UD_stueht_2.wav'},
+  {audio_file: 'audio/UD_stuht_2.wav'},
+  {audio_file: 'audio/UD_stuett_2.wav'}
+];
+
+// this defines the first block of trials.
+// because timeline_variables is set to test_items, jsPsych.timelineVariable('audio_file')
+// will pull items from the test_items array. one trial will be run for each entry in the
+// array. the order will be randomized because randomize_order is true.
+var testing_block_1 = {
+  timeline: [{
+    type: 'assimilation-similarity',
+    stimulus: jsPsych.timelineVariable('audio_file'),
+    choices: ['he','hid','hey','head','had','ha','haw','huh','who','hood','hoe','her']
+  }],
+  timeline_variables: test_items,
+  randomize_order: true
+}
+
+timeline.push(testing_block_1);
+
+var midway_break = {
+  type: 'button-response',
+  stimulus: '<p>Break time! Click the button below when you are ready to continue.</p>',
+  is_html: true,
+  choices: ['I am ready!']
+}
+
+timeline.push(midway_break);
+
+// second block of trials.
+// works the same way as the first block.
+var testing_block_2 = {
+  timeline: [{
+    type: 'assimilation-similarity',
+    stimulus: jsPsych.timelineVariable('audio_file'),
+    choices: ['he','hid','hey','head','had','ha','haw','huh','who','hood','hoe','her']
+  }],
+  timeline_variables: test_items,
+  randomize_order: true
+}
+
+timeline.push(testing_block_2);
+
+// save data
+var save_data = {
+  type: 'call-function',
+  func: function(){
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'write_data.php'); // change 'write_data.php' to point to php script.
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onload = function() {
+      if(xhr.status == 200){
+        var response = JSON.parse(xhr.responseText);
+        console.log(response.success);
+      }
+    };
+    xhr.send(jsPsych.data.getData().json());
+  }
+}
+
+timeline.push(save_data);
+
+
+var all_audio_files = [];
+for(var i=0; i<training_items.length; i++){
+  all_audio_files.push(training_items[i].audio_file);
+}
+for(var i=0; i<test_items.length; i++){
+  all_audio_files.push(test_items[i].audio_file);
 }
 
 jsPsych.init({
-  timeline: [test_trial]
+  timeline: timeline,
+  preload_audio: all_audio_files
 });
 
 </script>
