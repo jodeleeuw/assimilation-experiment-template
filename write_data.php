@@ -2,6 +2,7 @@
 /*
 The database_config.php file should have the following variables set:
 $servername = "localhost";
+$port = 3306; // 3306 is standard, but modify if needed.
 $username = "username";
 $password = "password";
 $dbname = "database";
@@ -27,7 +28,7 @@ xhr.send(JSON.stringify(data));
 include('database_config.php');
 $data_array = json_decode(file_get_contents('php://input'), true);
 try {
-  $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+  $conn = new PDO("mysql:host=$servername;port=$port;dbname=$dbname", $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   // First stage is to get all column names from the table and store
   // them in $col_names array.

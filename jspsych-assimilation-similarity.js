@@ -218,6 +218,7 @@ jsPsych.plugins["assimilation-similarity"] = (function() {
 
       // data saving
       var trial_data = {
+        audio: trial.stimulus,
         which_vowel: which_vowel,
         similarity: similarity,
         times_listened: play_count
