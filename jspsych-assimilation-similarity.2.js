@@ -67,7 +67,7 @@ jsPsych.plugins["assimilation-similarity"] = (function() {
             similarity_high_label: {
                 type: jsPsych.plugins.parameterType.STRING,
                 default: "(similar)"
-            }
+            },
             continue_button_label: {
                 type: jsPsych.plugins.parameterType.STRING,
                 default: "Next sound"
